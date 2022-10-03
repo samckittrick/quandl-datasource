@@ -1286,6 +1286,25 @@
   dependencies:
     tslib "2.4.0"
 
+"@grafana/agent-core@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@grafana/agent-core/-/agent-core-0.4.0.tgz#0252a888ab16dea82d97c571ca765383a1d6b319"
+  integrity sha512-yFbTRWVZKwUTdZ3A1AAzinWhkY0UkmduOEmlr0EYT5DJUOS/vEnzev5oB3Mh00bUUvN+AUvlMx4Nvnju1ahmJg==
+  dependencies:
+    "@opentelemetry/api" "^1.1.0"
+    "@opentelemetry/api-metrics" "^0.29.1"
+    "@opentelemetry/otlp-transformer" "^0.29.1"
+    uuid "^8.3.2"
+
+"@grafana/agent-web@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@grafana/agent-web/-/agent-web-0.4.0.tgz#03c4da34e29b4ca9f40c3574b2e85a7127a070fd"
+  integrity sha512-rVjLmQ/+Q8j3klDVlgt2pb3fIeWMvn3UAQLSBTC0L53Z/snNGvKQBe8b14ndjO6+cxWXFMc2kMJpw6NxpSYL5Q==
+  dependencies:
+    "@grafana/agent-core" "^0.4.0"
+    ua-parser-js "^1.0.2"
+    web-vitals "^2.1.4"
+
 "@grafana/data@9.1.6", "@grafana/data@latest":
   version "9.1.6"
   resolved "https://registry.yarnpkg.com/@grafana/data/-/data-9.1.6.tgz#e5f8e7449d5bdc13edf52c76f61fdd35d9a296b1"
@@ -1333,6 +1352,24 @@
     eslint-plugin-react "7.29.4"
     eslint-plugin-react-hooks "4.3.0"
     typescript "4.6.4"
+
+"@grafana/runtime@latest":
+  version "9.1.6"
+  resolved "https://registry.yarnpkg.com/@grafana/runtime/-/runtime-9.1.6.tgz#9b8f30a5d76641e46f0cee21f3f8aca7fa2245b1"
+  integrity sha512-9oyaD9urrYfGWXXFmfG1dr0bJDrIfx9B+s/4XGj+FDIQTooBODCnzAVnYKAi9U9RDl3F6XOh77CQsEjBxCEr2w==
+  dependencies:
+    "@grafana/agent-web" "^0.4.0"
+    "@grafana/data" "9.1.6"
+    "@grafana/e2e-selectors" "9.1.6"
+    "@grafana/ui" "9.1.6"
+    "@sentry/browser" "6.19.7"
+    history "4.10.1"
+    lodash "4.17.21"
+    react "17.0.2"
+    react-dom "17.0.2"
+    rxjs "7.5.6"
+    systemjs "0.20.19"
+    tslib "2.4.0"
 
 "@grafana/schema@9.1.6":
   version "9.1.6"
@@ -1928,6 +1965,68 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
+
+"@opentelemetry/api-metrics@0.29.2", "@opentelemetry/api-metrics@^0.29.1":
+  version "0.29.2"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/api-metrics/-/api-metrics-0.29.2.tgz#daa823e0965754222b49a6ae6133df8b39ff8fd2"
+  integrity sha512-yRdF5beqKuEdsPNoO7ijWCQ9HcyN0Tlgicf8RS6gzGOI54d6Hj7yKquJ6+X9XV+CSRbRWJYb+lOsXyso7uyX2g==
+  dependencies:
+    "@opentelemetry/api" "^1.0.0"
+
+"@opentelemetry/api@^1.0.0", "@opentelemetry/api@^1.1.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-1.2.0.tgz#89ef99401cde6208cff98760b67663726ef26686"
+  integrity sha512-0nBr+VZNKm9tvNDZFstI3Pq1fCTEDK5OZTnVKNvBNAKgd0yIvmwsP4m61rEv7ZP+tOUjWJhROpxK5MsnlF911g==
+
+"@opentelemetry/core@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/core/-/core-1.3.1.tgz#6eef5c5efca9a4cd7daa0cd4c7ff28ca2317c8d7"
+  integrity sha512-k7lOC86N7WIyUZsUuSKZfFIrUtINtlauMGQsC1r7jNmcr0vVJGqK1ROBvt7WWMxLbpMnt1q2pXJO8tKu0b9auA==
+  dependencies:
+    "@opentelemetry/semantic-conventions" "1.3.1"
+
+"@opentelemetry/otlp-transformer@^0.29.1":
+  version "0.29.2"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/otlp-transformer/-/otlp-transformer-0.29.2.tgz#61897d3d747182ab7e315a88a9a710a759c13390"
+  integrity sha512-Y6dJj+rhRGynxhLlgEJkdkXuLHdFG8igcSBv6oy3m3GHSSvZkyNV34dVjtZJ586mUXsbFuAf6uqjzteobewO1g==
+  dependencies:
+    "@opentelemetry/api-metrics" "0.29.2"
+    "@opentelemetry/core" "1.3.1"
+    "@opentelemetry/resources" "1.3.1"
+    "@opentelemetry/sdk-metrics-base" "0.29.2"
+    "@opentelemetry/sdk-trace-base" "1.3.1"
+
+"@opentelemetry/resources@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/resources/-/resources-1.3.1.tgz#9fd85ac4ffeefc35441404b384d5c1db8b243121"
+  integrity sha512-X8bl3X0YjlsHWy0Iv0KUETtZuRUznX4yr1iScKCtfy8AoRfZFc2xxWKMDJ0TrqYwSapgeg4YwpmRzUKmmnrbeA==
+  dependencies:
+    "@opentelemetry/core" "1.3.1"
+    "@opentelemetry/semantic-conventions" "1.3.1"
+
+"@opentelemetry/sdk-metrics-base@0.29.2":
+  version "0.29.2"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/sdk-metrics-base/-/sdk-metrics-base-0.29.2.tgz#bd515455f1d90e211458dcf957f0ae937772b155"
+  integrity sha512-7hhhZ/6YRRgAXOUTeCsbe6SIk3wZAdAHnEwGGp7aiVH5AOyioHyHInw4EHtowlD6dbLxUWURjh6k+Geht2zbxg==
+  dependencies:
+    "@opentelemetry/api-metrics" "0.29.2"
+    "@opentelemetry/core" "1.3.1"
+    "@opentelemetry/resources" "1.3.1"
+    lodash.merge "4.6.2"
+
+"@opentelemetry/sdk-trace-base@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/sdk-trace-base/-/sdk-trace-base-1.3.1.tgz#958083dbab928eefd17848959ac8810c787bec7f"
+  integrity sha512-Or95QZ+9QyvAiwqj+K68z8bDDuyWF50c37w17D10GV1dWzg4Ezcectsu/GB61QcBxm3Y4br0EN5F5TpIFfFliQ==
+  dependencies:
+    "@opentelemetry/core" "1.3.1"
+    "@opentelemetry/resources" "1.3.1"
+    "@opentelemetry/semantic-conventions" "1.3.1"
+
+"@opentelemetry/semantic-conventions@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@opentelemetry/semantic-conventions/-/semantic-conventions-1.3.1.tgz#ba07b864a3c955f061aa30ea3ef7f4ae4449794a"
+  integrity sha512-wU5J8rUoo32oSef/rFpOT1HIjLjAv3qIDHkw1QIhODV3OpAVHi5oVzlouozg9obUmZKtbZ0qUe/m7FP0y0yBzA==
 
 "@petamoriken/float16@^3.4.7":
   version "3.6.6"
@@ -5476,7 +5575,7 @@ highlight-words-core@^1.2.0:
   resolved "https://registry.yarnpkg.com/highlight-words-core/-/highlight-words-core-1.2.2.tgz#1eff6d7d9f0a22f155042a00791237791b1eeaaa"
   integrity sha512-BXUKIkUuh6cmmxzi5OIbUJxrG8OAk2MqoL1DtO3Wo9D2faJg2ph5ntyuQeLqaHJmzER6H5tllCDA9ZnNe9BVGg==
 
-history@^4.9.0:
+history@4.10.1, history@^4.9.0:
   version "4.10.1"
   resolved "https://registry.yarnpkg.com/history/-/history-4.10.1.tgz#33371a65e3a83b267434e2b3f3b1b4c58aad4cf3"
   integrity sha512-36nwAD620w12kuzPAsyINPWJqlNbij+hpK1k9XRloDtym8mxzGYl2c17LnV6IAGB2Dmg4tEa7G7DlawS0+qjew==
@@ -6751,7 +6850,7 @@ lodash.memoize@4.x, lodash.memoize@^4.1.1, lodash.memoize@^4.1.2:
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag==
 
-lodash.merge@^4.6.2:
+lodash.merge@4.6.2, lodash.merge@^4.6.2:
   version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
@@ -9407,6 +9506,11 @@ symbol-tree@^3.2.4:
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
+systemjs@0.20.19:
+  version "0.20.19"
+  resolved "https://registry.yarnpkg.com/systemjs/-/systemjs-0.20.19.tgz#c2b9e79c19f4bea53a19b1ed3f974ffb463be949"
+  integrity sha512-H/rKwNEEyej/+IhkmFNmKFyJul8tbH/muiPq5TyNoVTwsGhUjRsN3NlFnFQUvFXA3+GQmsXkCNXU6QKPl779aw==
+
 tapable@^1.0.0:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/tapable/-/tapable-1.1.3.tgz#a1fccc06b58db61fd7a45da2da44f5f3a3e67ba2"
@@ -9669,6 +9773,11 @@ typescript@4.7.4:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
   integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
 
+ua-parser-js@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-1.0.2.tgz#e2976c34dbfb30b15d2c300b2a53eac87c57a775"
+  integrity sha512-00y/AXhx0/SsnI51fTc0rLRmafiGOM4/O+ny10Ps7f+j/b8p/ZY11ytMgznXkOVo4GQ+KwQG5UQLkLGirsACRg==
+
 unbox-primitive@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/unbox-primitive/-/unbox-primitive-1.0.2.tgz#29032021057d5e6cdbd08c5129c226dff8ed6f9e"
@@ -9835,6 +9944,11 @@ wcwidth@^1.0.1:
   integrity sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==
   dependencies:
     defaults "^1.0.3"
+
+web-vitals@^2.1.4:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-2.1.4.tgz#76563175a475a5e835264d373704f9dde718290c"
+  integrity sha512-sVWcwhU5mX6crfI5Vd2dC4qchyTqxV8URinzt25XqVh+bHEPGH4C3NPrNionCP7Obx59wrYEbNlw4Z8sjALzZg==
 
 web-worker@^1.2.0:
   version "1.2.0"

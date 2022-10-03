@@ -36,5 +36,17 @@
   "dependencies": {
     "grafanaDependency": ">=7.0.0",
     "plugins": []
-  }
+  },
+  "routes": [
+    {
+      "path": "quandlApi",
+      "url": "https://data.nasdaq.com/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "content": "Bearer {{ .SecureJsonData.apiKey}}"
+        }
+      ]
+    }
+  ]
 }
