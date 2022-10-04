@@ -41,10 +41,10 @@
     {
       "path": "quandlApi",
       "url": "https://data.nasdaq.com/",
-      "headers": [
+      "urlParams": [
         {
-          "name": "Authorization",
-          "content": "Bearer {{ .SecureJsonData.apiKey}}"
+          "name": "api_key",
+          "content": "{{ .SecureJsonData.apiKey }}"
         }
       ]
     }
