@@ -12,6 +12,7 @@ export interface MyQuery extends DataQuery {
   order?: boolean; // true - ascending, false - descending
   collapse?: string;
   transform?: string;
+  setAdvanced: boolean; // The status of the advanced slider
 }
 
 export const defaultQuery: Partial<MyQuery> = {
