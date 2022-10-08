@@ -9,7 +9,7 @@ export interface MyQuery extends DataQuery {
   dataset_code: string;
   limit?: number;
   column_index?: number;
-  order?: boolean; // true - ascending, false - descending
+  order?: string;
   collapse?: string;
   transform?: string;
   setAdvanced: boolean; // The status of the advanced slider

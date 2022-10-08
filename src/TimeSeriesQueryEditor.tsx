@@ -1,7 +1,7 @@
 import defaults from 'lodash/defaults';
 
 import React, { ChangeEvent, PureComponent } from 'react';
-import { QueryEditorProps } from "@grafana/data";
+import { QueryEditorProps, SelectableValue } from "@grafana/data";
 import { Switch, Label, InlineField, Input, InlineFieldRow, Select } from '@grafana/ui';
 import { DataSource } from "./datasource";
 import { defaultQuery, MyDataSourceOptions, MyQuery } from "./types";
@@ -9,8 +9,41 @@ import { defaultQuery, MyDataSourceOptions, MyQuery } from "./types";
 type Props = QueryEditorProps<DataSource, MyQuery, MyDataSourceOptions>;
 
 export class TimeSeriesQueryEditor extends PureComponent<Props> {
+
+  /* 
+   * Functions for creating select field lists
+  */
+  private getOrderSelects(): SelectableValue[] {
+    return [
+      { label: "Ascending", value: "asc"},
+      { label: "Descending", value: "desc"}
+    ]
+  }
+
+  private getCollapseSelects(): SelectableValue[] {
+    return [
+      { label: "None", value: "none"},
+      { label: "Daily", value: "daily"},
+      { label: "Weekly", value: "weekly"},
+      { label: "Monthly", value: "monthly"},
+      { label: "Quarterly", value: "quarterly"},
+      { label: "Annually", value: "annually"},
+    ]
+  }
+
+  private getTransformSelects(): SelectableValue[] {
+    return [
+      {label: "None", value: "none"},
+      {label: "diff", value: "diff"},
+      {label: "rdiff", value: "rdiff"},
+      {label: "rdif_from", value: "rdiff_from"},
+      {label: "cumul", value: "cumul"},
+      {label: "normalize", value: "normalize"}
+    ]
+  }
+
   /*
-   * Standard Level Parameters
+   * Standard Level Event Handlers
    */
   onDBCodeChange = (event: ChangeEvent<HTMLInputElement>) => {
     console.log("Changed dbcode")
@@ -36,7 +69,7 @@ export class TimeSeriesQueryEditor extends PureComponent<Props> {
 
 
   /*
-   * Advanced Time Series Stuff
+   * Advanced Time Series Event Handlers
    */
   onLimitChanged = (event: ChangeEvent<HTMLInputElement>) => {
     const { onChange, query, onRunQuery } = this.props;
@@ -51,6 +84,27 @@ export class TimeSeriesQueryEditor extends PureComponent<Props> {
     // executes the query
     onRunQuery();
   };
+
+  onOrderChanged = (value: SelectableValue<string>) => {
+    const { onChange, query, onRunQuery } = this.props;
+    onChange({...query, order: value.value})
+    // executes the query
+    onRunQuery();
+  }
+
+  onCollapseChanged = (value: SelectableValue<string>) => {
+    const { onChange, query, onRunQuery } = this.props;
+    onChange({...query, collapse: value.value})
+    // executes the query
+    onRunQuery();
+  }
+
+  onTransformChanged = (value: SelectableValue<string>) => {
+    const { onChange, query, onRunQuery } = this.props;
+    onChange({...query, transform: value.value})
+    // executes the query
+    onRunQuery();
+  }
 
  
   AdvancedTimeSeriesParams() {
@@ -67,17 +121,23 @@ export class TimeSeriesQueryEditor extends PureComponent<Props> {
         <InlineFieldRow>
           <InlineField label="Order">
             <Select 
-              onChange={(value) => console.log(value)}
+              options={this.getOrderSelects()}
+              value={this.props.query.order}
+              onChange={this.onOrderChanged}
             />
           </InlineField>
           <InlineField label="Collapse">
             <Select
-              onChange={(value) => console.log(value)}
+              options={this.getCollapseSelects()}
+              value={this.props.query.collapse}
+              onChange={this.onCollapseChanged}
             />
           </InlineField>
           <InlineField label="Transform">
             <Select 
-              onChange={(value) => console.log(value)}
+              options={this.getTransformSelects()}
+              value={this.props.query.transform}
+              onChange={this.onTransformChanged}
             />
           </InlineField>
         </InlineFieldRow>
