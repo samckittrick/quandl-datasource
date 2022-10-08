@@ -32,20 +32,35 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     const observableResponses: Array<Observable<DataQueryResponse>> = options.targets.map((query) => {
 
       // Build query parameters and path
+      const apiParams: Map<string, any> = new Map<string,any>();
+
+      // range params
       const { range } = options;
       const from = range!.from.format("YYYY-MM-DD");
       const to = range!.to.format("YYYY-MM-DD");
-      const apiPath = `/api/v3/datasets/${query.database_code}/${query.dataset_code}/data.json?start_date=${from}&end_date=${to}`;
-      console.log(apiPath);
+      apiParams.set("start_date", from);
+      apiParams.set("end_date", to);
+
+      // Advanced Params
+      if(query.setAdvanced) { // By only applying them when setAdvanced is true, we only apply them when they are visible. Prevents confusion.
+        if(query.limit) {apiParams.set("limit", query.limit);}
+        if(query.column_index) {apiParams.set("column_index", query.column_index);}
+        if(query.order) {apiParams.set("order", query.order);}
+        if(query.collapse) {apiParams.set("collapse", query.collapse);}
+        if(query.transform) {apiParams.set("transform", query.transform)}
+      }
+      
+      const apiPath = `/api/v3/datasets/${query.database_code}/${query.dataset_code}/data.json`;
       // Create a new observable to return
       const queryObservable = new Observable<DataQueryResponse>((subscriber) => {
 
         // The doRequest function returns an observable. We subscribe to it, format the data
         // and emit our own next with the formatted data. 
-        let response: Observable<FetchResponse> =  this.doRequest(apiPath);
+        let response: Observable<FetchResponse> =  this.doRequest(apiPath, Object.fromEntries(apiParams));
         let respSubscriber = response.subscribe({
           next(r) { 
-            console.log(r);
+            //console.log(`Response for query ${query.refId}`);
+            //console.log(r);
 
             if(r.status !== 200) {
               subscriber.error(`Unexpected HTTP Response from API: ${r.status} - ${r.statusText}`);
@@ -104,7 +119,6 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   async testDatasource() {
     // Implement a health check for your data source.
     let response = this.doRequest("/api/v3/datasets/FED/FA087005086_A/data.json");
-    console.log(response)
     let respSubscriber = response.subscribe({
       next(x) {
         if(x.status === 200) {
@@ -119,7 +133,6 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         console.log(err);
       },
       complete() {
-        console.log("Complete");
         respSubscriber.unsubscribe();
       }
     });
@@ -129,10 +142,11 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     };
   }
 
-  doRequest(path: string): Observable<FetchResponse> {
+  doRequest(path: string, apiParams: Record<string, any> | undefined = undefined): Observable<FetchResponse> {
     const result = getBackendSrv().fetch({
       method: "GET",
       url: this.instanceUrl + "/quandlApi" + path,
+      params: apiParams
     });
 
     return result;

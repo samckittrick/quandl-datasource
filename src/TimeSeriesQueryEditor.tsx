@@ -46,7 +46,6 @@ export class TimeSeriesQueryEditor extends PureComponent<Props> {
    * Standard Level Event Handlers
    */
   onDBCodeChange = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log("Changed dbcode")
     const { onChange, query, onRunQuery } = this.props;
     onChange({ ...query, database_code: event.target.value });
     // executes the query
@@ -115,7 +114,7 @@ export class TimeSeriesQueryEditor extends PureComponent<Props> {
             <Input type="number" value={this.props.query.limit} onChange={this.onLimitChanged}/>
           </InlineField>
           <InlineField label="Column Index">
-            <Input type="number" value="3" onChange={this.onColumnIndexChanged}/>
+            <Input type="number" value={this.props.query.column_index} onChange={this.onColumnIndexChanged}/>
           </InlineField>
         </InlineFieldRow>
         <InlineFieldRow>
@@ -146,7 +145,6 @@ export class TimeSeriesQueryEditor extends PureComponent<Props> {
   }
 
   render() {
-    console.log(this.props);
     const query = defaults(this.props.query, defaultQuery);
     const { database_code, dataset_code, setAdvanced } = query;
 
