@@ -1,11 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
-  "name": "Quandl Nasdaq",
-  "id": "samckittrick-quandl-datasource",
+  "name": "Unoffial Nasdaq Data Link",
+  "id": "samckittrick-unofficialnasdaq-datasource",
   "metrics": true,
   "info": {
-    "description": "An unofficial datasource for accessing the Quandl Nasdaq data sets",
+    "description": "An unofficial datasource for accessing the Nasdaq Data Link data sets",
     "author": {
       "name": "Scott McKittrick",
       "url": "https://scottmckittrick.com"
@@ -22,11 +22,11 @@
     "links": [
       {
         "name": "Website",
-        "url": "https://github.com/grafana/grafana-starter-datasource"
+        "url": "https://github.com/samckittrick/unofficial-nasdaq-datasource"
       },
       {
         "name": "License",
-        "url": "https://github.com/grafana/grafana-starter-datasource/blob/master/LICENSE"
+        "url": "https://github.com/samckittrick/unofficial-nasdaq-datasource/blob/main/LICENSE"
       }
     ],
     "screenshots": [],

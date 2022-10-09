@@ -1,42 +1,26 @@
-# Grafana Data Source Plugin Template
+# Unofficial Nasdaq DataLink Data Source Plugin
 
-[![Build](https://github.com/grafana/grafana-starter-datasource/workflows/CI/badge.svg)](https://github.com/grafana/grafana-starter-datasource/actions?query=workflow%3A%22CI%22)
+This datasource plugin is intended to allow users to graph data from any data sets on the Nasdaq Data Link (formerly Quandl) service. 
 
-This template is a starting point for building Grafana Data Source Plugins
+## Setup
+1. Install the plugin
+2. Set up an account on the [Nasdaq Data Link website](https://data.nasdaq.com/sign-up)
+3. Enter your api key in the datasource configuration. 
+4. Start adding panels!
 
-## What is Grafana Data Source Plugin?
+## Configuration
+**Note:** Currently only time series datasets are supported.
 
-Grafana supports a wide range of data sources, including Prometheus, MySQL, and even Datadog. There’s a good chance you can already visualize metrics from the systems you have set up. In some cases, though, you already have an in-house metrics solution that you’d like to add to your Grafana dashboards. Grafana Data Source Plugins enables integrating such solutions with Grafana.
+There are two main configuration fields for a query. 
+1. Database Code: The identifier for the database
+2. Dataset code: The identifier for the specific data set
 
-## Getting started
+**Advanced Settings**  
+Setting the advanced settings switch exposes several other parameters that can be added to a query. They correspond to the parameters noted in the [Nasdaq documentation](https://docs.data.nasdaq.com/docs/parameters-2).
 
-1. Install dependencies
+**Start Date and End Date**  
+The `start_date` and `end_date` parameters are not directly exposed and are controlled by the time range feature in the dashboard. 
 
-   ```bash
-   yarn install
-   ```
-
-2. Build plugin in development mode or run in watch mode
-
-   ```bash
-   yarn dev
-   ```
-
-   or
-
-   ```bash
-   yarn watch
-   ```
-
-3. Build plugin in production mode
-
-   ```bash
-   yarn build
-   ```
-
-## Learn more
-
-- [Build a data source plugin tutorial](https://grafana.com/tutorials/build-a-data-source-plugin)
-- [Grafana documentation](https://grafana.com/docs/)
-- [Grafana Tutorials](https://grafana.com/tutorials/) - Grafana Tutorials are step-by-step guides that help you make the most of Grafana
-- [Grafana UI Library](https://developers.grafana.com/ui) - UI components to help you build interfaces using Grafana Design System
+## Planned Features
+1. Table data support
+2. Prepopulate column_index select field with the column names for the current dataset. 

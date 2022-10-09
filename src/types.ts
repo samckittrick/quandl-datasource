@@ -16,11 +16,9 @@ export interface MyQuery extends DataQuery {
 }
 
 export const defaultQuery: Partial<MyQuery> = {
-  constant: 6.5,
-
-  // Default to US GDP because I had to choose something
-  database_code: "FED",
-  dataset_code: "FA087005086_A",
+  // Default to TREASURY Yields because I had to choose something
+  database_code: "TREASURY",
+  dataset_code: "YIELD",
 
 };
 
