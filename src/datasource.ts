@@ -13,8 +13,6 @@ import { getBackendSrv, FetchResponse } from "@grafana/runtime"
 
 import { MyQuery, MyDataSourceOptions } from './types';
 
-import { Observable, merge } from 'rxjs';
-
 import { QuandlDataset } from './QuandlApiTypes';
  
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
@@ -28,7 +26,62 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
   // TODO: Add default query
   // query doesn't need to be async anymore because we are using Observables
-  query(options: DataQueryRequest<MyQuery>): Observable<DataQueryResponse> {
+  async query(options: DataQueryRequest<MyQuery>): Promise<DataQueryResponse> {
+    const promises = options.targets.map((query) => {
+            // Build query parameters and path
+            const apiParams: Map<string, any> = new Map<string,any>();
+
+            // range params
+            const { range } = options;
+            const from = range!.from.format("YYYY-MM-DD");
+            const to = range!.to.format("YYYY-MM-DD");
+            apiParams.set("start_date", from);
+            apiParams.set("end_date", to);
+      
+            // Advanced Params
+            if(query.setAdvanced) { // By only applying them when setAdvanced is true, we only apply them when they are visible. Prevents confusion.
+              if(query.limit) {apiParams.set("limit", query.limit);}
+              if(query.column_index) {apiParams.set("column_index", query.column_index);}
+              if(query.order) {apiParams.set("order", query.order);}
+              if(query.collapse) {apiParams.set("collapse", query.collapse);}
+              if(query.transform) {apiParams.set("transform", query.transform)}
+            }
+            
+            const apiPath = `/api/v3/datasets/${query.database_code}/${query.dataset_code}/data.json`;
+            return this.doRequest(apiPath, Object.fromEntries(apiParams)).then((r) => {
+              if(r.status !== 200) {
+                throw new Error(`Unexpected HTTP Response from API: ${r.status} - ${r.statusText}`);
+              }
+  
+              // Start Parsing the Response
+              let df = new MutableDataFrame({
+                refId: query.refId,
+                fields: [],
+              })
+  
+              let dataset_data: QuandlDataset = r.data.dataset_data as QuandlDataset;
+              for(const f of dataset_data.column_names) {
+                
+                // The time series data set always has a date and then number fields. 
+                // With tables we'll probably have to infer data types or just use xml because the xml format shows types. . 
+                if(f === "Date") {
+                  df.addField({name: f, type: FieldType.time})
+                } else {
+                  df.addField({ name: f, type: FieldType.number})
+                }
+              }
+  
+              for(const r of dataset_data.data) {
+                df.appendRow(r);
+              }
+              
+ 
+              return df; 
+            })
+    });
+
+    return Promise.all(promises).then((data) => ({data}));
+    /*
     const observableResponses: Array<Observable<DataQueryResponse>> = options.targets.map((query) => {
 
       // Build query parameters and path
@@ -113,37 +166,24 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     // The query function only returns one observable. we use merge to combine them all?
     return merge(...observableResponses);
     
-
+    */
   }
 
   async testDatasource() {
     // Implement a health check for your data source.
-    let response = this.doRequest("/api/v3/datasets/FED/FA087005086_A/data.json");
-    let respSubscriber = response.subscribe({
-      next(x) {
-        if(x.status === 200) {
-          return {
-            status: "success",
-            message: "Success"
-          }
-        }
-        else { throw Error(`Error connecting to Quandl API: ${x.status}`)}
-      },
-      error(err) {
-        console.log(err);
-      },
-      complete() {
-        respSubscriber.unsubscribe();
+    let response = await this.doRequest("/api/v3/datasets/FED/FA087005086_A/data.json");
+
+    if(response.status === 200) {
+      return {
+        status: "success",
+        message: "Success"
       }
-    });
-    return {
-      status: 'success',
-      message: 'Success',
-    };
+    }
+    else { throw Error(`Error connecting to Quandl API: ${response.status}`)}
   }
 
-  doRequest(path: string, apiParams: Record<string, any> | undefined = undefined): Observable<FetchResponse> {
-    const result = getBackendSrv().fetch({
+  async doRequest(path: string, apiParams: Record<string, any> | undefined = undefined): Promise<FetchResponse> {
+    const result = getBackendSrv().datasourceRequest({
       method: "GET",
       url: this.instanceUrl + "/quandlApi" + path,
       params: apiParams
