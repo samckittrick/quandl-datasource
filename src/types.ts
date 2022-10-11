@@ -17,7 +17,7 @@ export interface MyQuery extends DataQuery {
 
 export const defaultQuery: Partial<MyQuery> = {
   // Default to TREASURY Yields because I had to choose something
-  database_code: "TREASURY",
+  database_code: "USTREASURY",
   dataset_code: "YIELD",
 
 };
