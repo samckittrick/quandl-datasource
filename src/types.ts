@@ -1,9 +1,14 @@
 import { DataQuery, DataSourceJsonData } from '@grafana/data';
 
+export enum QueryType {
+  TimeSeries,
+  Table,
+}
+
 export interface MyQuery extends DataQuery {
-  queryText?: string;
-  constant: number;
-  
+  // Type of Data Source Query
+  query_type: QueryType,
+
   // Quandl time series params
   database_code: string;
   dataset_code: string;
@@ -17,6 +22,7 @@ export interface MyQuery extends DataQuery {
 
 export const defaultQuery: Partial<MyQuery> = {
   // Default to TREASURY Yields because I had to choose something
+  query_type: QueryType.TimeSeries,
   database_code: "USTREASURY",
   dataset_code: "YIELD",
 
