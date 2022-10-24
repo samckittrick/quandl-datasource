@@ -13,7 +13,7 @@ import { getBackendSrv, FetchResponse } from "@grafana/runtime"
 
 import { MyQuery, MyDataSourceOptions } from './types';
 
-import { Observable, merge } from 'rxjs';
+import { Observable, merge, map } from 'rxjs';
 
 import { QuandlDataset } from './QuandlApiTypes';
  
@@ -51,69 +51,51 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       }
       
       const apiPath = `/api/v3/datasets/${query.database_code}/${query.dataset_code}/data.json`;
-      // Create a new observable to return
-      const queryObservable = new Observable<DataQueryResponse>((subscriber) => {
-
-        // The doRequest function returns an observable. We subscribe to it, format the data
-        // and emit our own next with the formatted data. 
-        let response: Observable<FetchResponse> =  this.doRequest(apiPath, Object.fromEntries(apiParams));
-        let respSubscriber = response.subscribe({
-          next(r) { 
-            //console.log(`Response for query ${query.refId}`);
-            //console.log(r);
-
-            if(r.status !== 200) {
-              subscriber.error(`Unexpected HTTP Response from API: ${r.status} - ${r.statusText}`);
-              return;
-            }
-
-            // Start Parsing the Response
-            let df = new MutableDataFrame({
-              refId: query.refId,
-              fields: [],
-            })
-
-            let dataset_data: QuandlDataset = r.data.dataset_data as QuandlDataset;
-            for(const f of dataset_data.column_names) {
-              
-              // The time series data set always has a date and then number fields. 
-              // With tables we'll probably have to infer data types or just use xml because the xml format shows types. . 
-              if(f === "Date") {
-                df.addField({name: f, type: FieldType.time})
-              } else {
-                df.addField({ name: f, type: FieldType.number})
-              }
-            }
-
-            for(const r of dataset_data.data) {
-              df.appendRow(r);
-            }
-            
-            // Alert the subscriber that we have new formatted data. 
-            // Not sure why I have to put it in an object with the array, but it seems to work. 
-            subscriber.next( {data: [df] } ); 
-            
-          },
-          error(err) { 
-            console.log(err);
-            subscriber.error(`API returned error: ${err.status} - ${err.statusText}`);
-          },
-          complete() { 
-            // Once we are done reading the response, we can call it complete here too. 
-            subscriber.complete(); 
-            respSubscriber.unsubscribe()
-          }
-        });
-
-      });
-
-      return queryObservable;
+      
+      // Use pipe to map a processing functon to the observable returned by doRequest. 
+      // The choice of the processing function will eventually be based on the QueryType parameter. 
+      // We need to add a parameter to the function, so we make a closure that calls the function with both the response and the refId.
+      return this.doRequest(apiPath, Object.fromEntries(apiParams)).pipe(map(resp => this.handleTimeSeriesResponse(resp, query.refId)));
     });
 
     // The query function only returns one observable. we use merge to combine them all?
     return merge(...observableResponses);
     
 
+  }
+
+  // Process responses from a timeseries api call. 
+  // We need to receive the refId as well, because we add it to the data frame. 
+  handleTimeSeriesResponse(r: FetchResponse, refId: string): DataQueryResponse {
+    if(r.status !== 200) {
+      throw new Error(`Unexpected HTTP Response from API: ${r.status} - ${r.statusText}`);
+    }
+
+    // Start Parsing the Response
+    let df = new MutableDataFrame({
+      refId: refId,
+      fields: [],
+    })
+
+    let dataset_data: QuandlDataset = r.data.dataset_data as QuandlDataset;
+    for(const f of dataset_data.column_names) {
+      
+      // The time series data set always has a date and then number fields. 
+      // With tables we'll probably have to infer data types or just use xml because the xml format shows types. . 
+      if(f === "Date") {
+        df.addField({name: f, type: FieldType.time})
+      } else {
+        df.addField({ name: f, type: FieldType.number})
+      }
+    }
+
+    for(const r of dataset_data.data) {
+      df.appendRow(r);
+    }
+    
+    // Alert the subscriber that we have new formatted data. 
+    // Not sure why I have to put it in an object with the array, but it seems to work. 
+    return {data: [df] };
   }
 
   async testDatasource() {
