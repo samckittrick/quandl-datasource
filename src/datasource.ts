@@ -11,11 +11,11 @@ import {
 
 import { getBackendSrv, FetchResponse } from "@grafana/runtime"
 
-import { MyQuery, MyDataSourceOptions } from './types';
+import { MyQuery, MyDataSourceOptions, QueryType } from './types';
 
 import { Observable, merge, map } from 'rxjs';
 
-import { QuandlDataset } from './QuandlApiTypes';
+import { QuandlDataset, QuandlDataTable } from './QuandlApiTypes';
  
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   instanceUrl?: string;
@@ -33,29 +33,36 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
 
       // Build query parameters and path
       const apiParams: Map<string, any> = new Map<string,any>();
+      let apiPath = "";
 
-      // range params
-      const { range } = options;
-      const from = range!.from.format("YYYY-MM-DD");
-      const to = range!.to.format("YYYY-MM-DD");
-      apiParams.set("start_date", from);
-      apiParams.set("end_date", to);
+      if(query.query_type === QueryType.TimeSeries) {
+        // range params
+        const { range } = options;
+        const from = range!.from.format("YYYY-MM-DD");
+        const to = range!.to.format("YYYY-MM-DD");
+        apiParams.set("start_date", from);
+        apiParams.set("end_date", to);
 
-      // Advanced Params
-      if(query.setAdvanced) { // By only applying them when setAdvanced is true, we only apply them when they are visible. Prevents confusion.
-        if(query.limit) {apiParams.set("limit", query.limit);}
-        if(query.column_index) {apiParams.set("column_index", query.column_index);}
-        if(query.order) {apiParams.set("order", query.order);}
-        if(query.collapse) {apiParams.set("collapse", query.collapse);}
-        if(query.transform) {apiParams.set("transform", query.transform)}
+        // Advanced Params
+        if(query.setAdvanced) { // By only applying them when setAdvanced is true, we only apply them when they are visible. Prevents confusion.
+          if(query.limit) {apiParams.set("limit", query.limit);}
+          if(query.column_index) {apiParams.set("column_index", query.column_index);}
+          if(query.order) {apiParams.set("order", query.order);}
+          if(query.collapse) {apiParams.set("collapse", query.collapse);}
+          if(query.transform) {apiParams.set("transform", query.transform)}
+        }
+        
+        apiPath = `/api/v3/datasets/${query.database_code}/${query.dataset_code}/data.json`;
+      
+        // Use pipe to map a processing functon to the observable returned by doRequest. 
+        // The choice of the processing function will eventually be based on the QueryType parameter. 
+        // We need to add a parameter to the function, so we make a closure that calls the function with both the response and the refId.
+        return this.doRequest(apiPath, Object.fromEntries(apiParams)).pipe(map(resp => this.handleTimeSeriesResponse(resp, query.refId)));
       }
-      
-      const apiPath = `/api/v3/datasets/${query.database_code}/${query.dataset_code}/data.json`;
-      
-      // Use pipe to map a processing functon to the observable returned by doRequest. 
-      // The choice of the processing function will eventually be based on the QueryType parameter. 
-      // We need to add a parameter to the function, so we make a closure that calls the function with both the response and the refId.
-      return this.doRequest(apiPath, Object.fromEntries(apiParams)).pipe(map(resp => this.handleTimeSeriesResponse(resp, query.refId)));
+      else {
+        apiPath = `/api/v3/datatables/${query.database_code}/${query.dataset_code}.json`
+        return this.doRequest(apiPath).pipe(map(resp => this.handleTableResponse(resp, query.refId)));
+      }
     });
 
     // The query function only returns one observable. we use merge to combine them all?
@@ -96,6 +103,44 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     // Alert the subscriber that we have new formatted data. 
     // Not sure why I have to put it in an object with the array, but it seems to work. 
     return {data: [df] };
+  }
+
+  handleTableResponse(r: FetchResponse, refId: string): DataQueryResponse {
+    if(r.status !== 200) {
+      throw new Error(`Unexpected HTTP Response from API: ${r.status} - ${r.statusText}`);
+    }
+
+    let df = new MutableDataFrame({
+      refId: refId,
+      fields: [],
+    });
+
+    let datatable_data: QuandlDataTable = r.data.datatable as QuandlDataTable;
+    for(const f of datatable_data.columns) {
+      switch(f.type) {
+        case "text":
+          df.addField({name: f.name, type: FieldType.string})
+          break;
+        case "double":
+          df.addField({name: f.name, type: FieldType.number});
+          break;
+        case "Date":
+          df.addField({name: f.name, type: FieldType.time});
+          break;
+        default:
+          throw new Error(`Unknown column type: ${f.type}`);  
+      }
+    }
+
+    for(const r of datatable_data.data) {
+      df.appendRow(r);
+    }
+
+    console.log(`Response for ${refId}`);
+    console.log(r);
+
+    return { data: [df] }
+
   }
 
   async testDatasource() {

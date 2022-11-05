@@ -106,7 +106,7 @@ export class TimeSeriesQueryEditor extends PureComponent<Props> {
   }
 
  
-  AdvancedTimeSeriesParams() {
+  AdvancedTimeSeriesParams(): JSX.Element {
     return (
       <div>
         <InlineFieldRow>

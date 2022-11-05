@@ -7,3 +7,13 @@ export type QuandlDataset = {
     end_date: string,
     data: string[][],
 }
+
+export type QuandleDataTableColumnDescriptor = {
+    name: string,
+    type: string,
+}
+
+export type QuandlDataTable = {
+    columns: QuandleDataTableColumnDescriptor[],
+    data: Array<Array<string|number>>,
+}
