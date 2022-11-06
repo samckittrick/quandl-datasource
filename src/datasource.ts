@@ -60,8 +60,16 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         return this.doRequest(apiPath, Object.fromEntries(apiParams)).pipe(map(resp => this.handleTimeSeriesResponse(resp, query.refId)));
       }
       else {
+        const apiParams: Map<string, any> = new Map<string, any>();
+        if(query.setAdvanced) {
+          // The table query doesn't have a limit param, but since 
+          // we can't paginate on the server side, we might as well just set
+          // the per_page param to the limit and only ever use the first page. 
+          if(query.limit) { apiParams.set("qopts.per_page", query.limit);}
+          if(query.columns) { apiParams.set("qopts.columns", query.columns);}
+        }
         apiPath = `/api/v3/datatables/${query.database_code}/${query.dataset_code}.json`
-        return this.doRequest(apiPath).pipe(map(resp => this.handleTableResponse(resp, query.refId)));
+        return this.doRequest(apiPath, (apiParams.size > 0) ? Object.fromEntries(apiParams) : undefined ).pipe(map(resp => this.handleTableResponse(resp, query.refId)));
       }
     });
 

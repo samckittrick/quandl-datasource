@@ -2,7 +2,7 @@ import defaults from 'lodash/defaults';
 
 import React, { ChangeEvent, PureComponent } from 'react';
 import { QueryEditorProps } from "@grafana/data";
-import { Switch, Label, InlineField, Input } from '@grafana/ui';
+import { Switch, Label, InlineField, Input, InlineFieldRow } from '@grafana/ui';
 import { DataSource } from "./datasource";
 import { defaultQuery, MyDataSourceOptions, MyQuery } from "./types";
 
@@ -32,11 +32,34 @@ export class TableQueryEditor extends PureComponent<Props> {
         onChange({...query, setAdvanced: event.target.checked });
         // executes the query
         onRunQuery();
-      }
+    };
+
+    onLimitChanged = (event: ChangeEvent<HTMLInputElement>) => {
+      const { onChange, query, onRunQuery } = this.props;
+      onChange({...query, limit: event.target.valueAsNumber});
+      onRunQuery();
+    };
+
+    onColumnChange = (event: ChangeEvent<HTMLInputElement>) => {
+      const { onChange, query, onRunQuery } = this.props;
+      onChange({...query, columns: event.target.value});
+      onRunQuery();
+    }
 
     AdvancedTableParams(): JSX.Element {
         return (
-          <p>Hello</p>
+          <div>
+            <InlineFieldRow>
+              <InlineField label="Limit" tooltip="Limit the number of records returned. (Max 10,000)">
+                <Input type="number" value={this.props.query.limit} onChange={this.onLimitChanged}/>
+              </InlineField>
+            </InlineFieldRow>
+            <InlineFieldRow>
+              <InlineField label="Display Columns" tooltip="Specify which columns to display, comma separated">
+                <Input type="text" value={this.props.query.columns} onChange={this.onColumnChange} />
+              </InlineField>
+            </InlineFieldRow>
+          </div>
         )
     }
 

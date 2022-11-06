@@ -10,14 +10,17 @@ export interface MyQuery extends DataQuery {
   query_type: QueryType,
 
   // Quandl time series params
-  database_code: string;
-  dataset_code: string;
-  limit?: number;
-  column_index?: number;
-  order?: string;
-  collapse?: string;
-  transform?: string;
-  setAdvanced: boolean; // The status of the advanced slider
+  database_code: string,
+  dataset_code: string,
+  limit?: number, // Shared with table params
+  column_index?: number,
+  order?: string,
+  collapse?: string,
+  transform?: string,
+  setAdvanced: boolean, // The status of the advanced slider
+
+  // Quandl Data Table Params
+  columns?: string,
 }
 
 export const defaultQuery: Partial<MyQuery> = {
