@@ -1,5 +1,7 @@
 # Changelog
 
+## 2.0.0
+
 ### New Features
 + Added support for table data queries.
 
