@@ -1,4 +1,5 @@
 import { DataQuery, DataSourceJsonData } from '@grafana/data';
+import { QuandlTableFilterDescriptor } from 'QuandlApiTypes';
 
 export enum QueryType {
   TimeSeries,
@@ -21,6 +22,7 @@ export interface MyQuery extends DataQuery {
 
   // Quandl Data Table Params
   columns?: string,
+  filters?: QuandlTableFilterDescriptor[],
 }
 
 export const defaultQuery: Partial<MyQuery> = {

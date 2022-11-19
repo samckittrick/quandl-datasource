@@ -17,3 +17,17 @@ export type QuandlDataTable = {
     columns: QuandleDataTableColumnDescriptor[],
     data: Array<Array<string|number>>,
 }
+
+export enum QuandlTableFilterOperator {
+    Equals,
+    GreaterThan,
+    LessThan,
+    GreaterThanOrEqual,
+    LessThanOrEqual,
+}
+
+export type QuandlTableFilterDescriptor = {
+    column: string,
+    operator: QuandlTableFilterOperator,
+    value: string,
+}

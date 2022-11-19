@@ -15,7 +15,7 @@ import { MyQuery, MyDataSourceOptions, QueryType } from './types';
 
 import { Observable, merge, map } from 'rxjs';
 
-import { QuandlDataset, QuandlDataTable } from './QuandlApiTypes';
+import { QuandlDataset, QuandlDataTable, QuandlTableFilterOperator } from './QuandlApiTypes';
  
 export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   instanceUrl?: string;
@@ -67,6 +67,32 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
           // the per_page param to the limit and only ever use the first page. 
           if(query.limit) { apiParams.set("qopts.per_page", query.limit);}
           if(query.columns) { apiParams.set("qopts.columns", query.columns);}
+
+          // need to serialize the filter descriptor for the api
+          if(query.filters) {
+            for(const f of query.filters) {
+              let key = f.column;
+
+              // The operator is appended to the name of the column
+              switch(f.operator) {
+                case QuandlTableFilterOperator.Equals:
+                  break;
+                case QuandlTableFilterOperator.GreaterThan:
+                  key = key.concat(".gt");
+                  break;
+                case QuandlTableFilterOperator.GreaterThanOrEqual:
+                  key = key.concat(".gte");
+                  break;
+                case QuandlTableFilterOperator.LessThan:
+                  key = key.concat(".lt");
+                  break;
+                case QuandlTableFilterOperator.LessThanOrEqual:
+                  key = key.concat(".lte");
+                  break;
+              }
+              apiParams.set(key, f.value);
+            }
+          }
         }
         apiPath = `/api/v3/datatables/${query.database_code}/${query.dataset_code}.json`
         return this.doRequest(apiPath, (apiParams.size > 0) ? Object.fromEntries(apiParams) : undefined ).pipe(map(resp => this.handleTableResponse(resp, query.refId)));

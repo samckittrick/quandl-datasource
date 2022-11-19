@@ -106,36 +106,36 @@ export class TimeSeriesQueryEditor extends PureComponent<Props> {
   }
 
  
-  AdvancedTimeSeriesParams(): JSX.Element {
+  AdvancedTimeSeriesParams(query: MyQuery): JSX.Element {
     return (
       <div>
         <InlineFieldRow>
           <InlineField label="Limit" tooltip="Limit the number of records returned.">
-            <Input type="number" value={this.props.query.limit} onChange={this.onLimitChanged}/>
+            <Input type="number" value={query.limit} onChange={this.onLimitChanged}/>
           </InlineField>
           <InlineField label="Column Index" tooltip="Limit the data returned to a specific column from the whole set.">
-            <Input type="number" value={this.props.query.column_index} onChange={this.onColumnIndexChanged}/>
+            <Input type="number" value={query.column_index} onChange={this.onColumnIndexChanged}/>
           </InlineField>
         </InlineFieldRow>
         <InlineFieldRow>
           <InlineField label="Order" tooltip="Order by date ascending or descending">
             <Select 
               options={this.getOrderSelects()}
-              value={this.props.query.order}
+              value={query.order}
               onChange={this.onOrderChanged}
             />
           </InlineField>
           <InlineField label="Collapse" tooltip="Change the sampling frequency of the data. See Docs for Details.">
             <Select
               options={this.getCollapseSelects()}
-              value={this.props.query.collapse}
+              value={query.collapse}
               onChange={this.onCollapseChanged}
             />
           </InlineField>
           <InlineField label="Transform" tooltip="Perform some basic calculations before receiving the data. See Docs for Details.">
             <Select 
               options={this.getTransformSelects()}
-              value={this.props.query.transform}
+              value={query.transform}
               onChange={this.onTransformChanged}
             />
           </InlineField>
@@ -172,7 +172,7 @@ export class TimeSeriesQueryEditor extends PureComponent<Props> {
               onChange={this.onAdvancedSwitchChanged}
             />
           </div>
-          { setAdvanced && this.AdvancedTimeSeriesParams() }
+          { setAdvanced && this.AdvancedTimeSeriesParams(query) }
         </div>
       </div>
     );
