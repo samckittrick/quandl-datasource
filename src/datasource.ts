@@ -40,6 +40,9 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         const { range } = options;
         const from = range!.from.format("YYYY-MM-DD");
         const to = range!.to.format("YYYY-MM-DD");
+        console.log(range);
+        console.log(`from: ${from}`)
+        console.log(`to: ${to}`)
         apiParams.set("start_date", from);
         apiParams.set("end_date", to);
 

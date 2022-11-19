@@ -90,7 +90,7 @@ export class TableQueryEditor extends PureComponent<Props> {
                 <InlineField label="Database Code">
                   <Input type="text" value={database_code} onChange={this.onDBCodeChange} />
                 </InlineField>
-                <InlineField label="Dataset Code">
+                <InlineField label="Datatable Code">
                   <Input type="text" value={dataset_code} onChange={this.onDBSetChange} />
                 </InlineField>
               </div>
