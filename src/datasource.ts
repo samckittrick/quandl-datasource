@@ -38,8 +38,8 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       if(query.query_type === QueryType.TimeSeries) {
         // range params
         const { range } = options;
-        const from = range!.from.format("YYYY-MM-DD");
-        const to = range!.to.format("YYYY-MM-DD");
+        const from = range!.from.toISOString() // Grafana provides this as local time. API accepts it as UTC
+        const to = range!.to.toISOString() // Grafana provides this as local time. API accepts it as UTC
         console.log(range);
         console.log(`from: ${from}`)
         console.log(`to: ${to}`)
@@ -111,6 +111,8 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   // Process responses from a timeseries api call. 
   // We need to receive the refId as well, because we add it to the data frame. 
   handleTimeSeriesResponse(r: FetchResponse, refId: string): DataQueryResponse {
+    console.log(`Response for ${refId}`);
+    console.log(r);
     if(r.status !== 200) {
       throw new Error(`Unexpected HTTP Response from API: ${r.status} - ${r.statusText}`);
     }
@@ -134,7 +136,10 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     }
 
     for(const r of dataset_data.data) {
-      df.appendRow(r);
+      // Date assumes UTC, which is what we want, since the API sends it that way.
+      // Once it's an object, grafana can convert it to local as needed.
+      let date = new Date(r[0]);
+      df.appendRow([ date, r[1]]);
     }
     
     // Alert the subscriber that we have new formatted data. 
@@ -153,28 +158,36 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
     });
 
     let datatable_data: QuandlDataTable = r.data.datatable as QuandlDataTable;
-    for(const f of datatable_data.columns) {
-      switch(f.type) {
+    // Use this to store a list of date fields.
+    let dateFieldList: number[] = [];
+    for( let i = 0; i < datatable_data.columns.length; i++) {
+      switch(datatable_data.columns[i].type) {
         case "text":
-          df.addField({name: f.name, type: FieldType.string})
+          df.addField({name: datatable_data.columns[i].name, type: FieldType.string})
           break;
         case "double":
-          df.addField({name: f.name, type: FieldType.number});
+          df.addField({name: datatable_data.columns[i].name, type: FieldType.number});
           break;
         case "Date":
-          df.addField({name: f.name, type: FieldType.time});
+          dateFieldList.push(i)
+          df.addField({name: datatable_data.columns[i].name, type: FieldType.time});
           break;
         default:
-          throw new Error(`Unknown column type: ${f.type}`);  
+          throw new Error(`Unknown column type: ${datatable_data.columns[i].type}`);  
       }
     }
 
     for(const r of datatable_data.data) {
-      df.appendRow(r);
+      // If the field is a date field, parse it as a Date so grafana can handle timezones correctly. 
+      let modifiedArr = r.map((val, idx) => {
+        return dateFieldList.includes(idx)? new Date(val) : val;
+      })
+      df.appendRow(modifiedArr);
     }
 
     console.log(`Response for ${refId}`);
     console.log(r);
+    console.log(df)
 
     return { data: [df] }
 

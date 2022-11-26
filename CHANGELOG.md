@@ -1,5 +1,8 @@
 # Changelog
 
+### Improvements/Bug Fixes
++ Fixed issue with time zone handling on time series queries. 
+
 ## 2.0.0
 
 ### New Features
