@@ -40,9 +40,6 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
         const { range } = options;
         const from = range!.from.toISOString() // Grafana provides this as local time. API accepts it as UTC
         const to = range!.to.toISOString() // Grafana provides this as local time. API accepts it as UTC
-        console.log(range);
-        console.log(`from: ${from}`)
-        console.log(`to: ${to}`)
         apiParams.set("start_date", from);
         apiParams.set("end_date", to);
 
@@ -111,8 +108,8 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
   // Process responses from a timeseries api call. 
   // We need to receive the refId as well, because we add it to the data frame. 
   handleTimeSeriesResponse(r: FetchResponse, refId: string): DataQueryResponse {
-    console.log(`Response for ${refId}`);
-    console.log(r);
+    //console.log(`Response for ${refId}`);
+    //console.log(r);
     if(r.status !== 200) {
       throw new Error(`Unexpected HTTP Response from API: ${r.status} - ${r.statusText}`);
     }
@@ -185,9 +182,8 @@ export class DataSource extends DataSourceApi<MyQuery, MyDataSourceOptions> {
       df.appendRow(modifiedArr);
     }
 
-    console.log(`Response for ${refId}`);
-    console.log(r);
-    console.log(df)
+    //console.log(`Response for ${refId}`);
+    //console.log(r);
 
     return { data: [df] }
 

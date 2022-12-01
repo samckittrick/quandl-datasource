@@ -53,7 +53,6 @@ export class TableQueryEditor extends PureComponent<Props> {
 
     onFilterListChange = (newFilterList: QuandlTableFilterDescriptor[]) => {
       const { onChange, query, onRunQuery } = this.props;
-      //console.log(newFilterList);
       onChange({...query, filters: newFilterList});
       onRunQuery();
     }
@@ -138,7 +137,7 @@ export class FilterEditorGroup extends PureComponent<FilterEditorGroupProps> {
 
   onFilterChanged = (newFilter: QuandlTableFilterDescriptor, index: number) => {
     if(this.state.filterList === undefined || this.state.filterList.length === 0) {
-      console.log("Warning, filter changed even though the filterList is empty.");
+      //console.log("Warning, filter changed even though the filterList is empty.");
       return;
     }
     // Update the specific filter in the list that got changed. 
@@ -148,8 +147,6 @@ export class FilterEditorGroup extends PureComponent<FilterEditorGroupProps> {
       return (i === index) ? newFilter : this.state.filterList[i];
     })*/
     this.setState({filterList: newFilterList});
-
-    console.log(newFilterList);
 
     if(this.props.onChange) { this.props.onChange(newFilterList) }
   }
@@ -165,7 +162,7 @@ export class FilterEditorGroup extends PureComponent<FilterEditorGroupProps> {
 
   onRemoveFilterClicked = (index: number) => {
     if(this.state.filterList === undefined || this.state.filterList.length === 0) {
-      console.log("Warning, filter removed even though the filterList is empty.");
+      //console.log("Warning, filter removed even though the filterList is empty.");
       return;
     }
 

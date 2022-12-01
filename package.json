@@ -1,6 +1,6 @@
 {
   "name": "samckittrick-unofficialnasdaq-datasource",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "An unofficial datasource for accessing the Nasdaq Data Link data sets",
   "scripts": {
     "build": "grafana-toolkit plugin:build",
